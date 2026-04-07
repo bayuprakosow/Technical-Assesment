@@ -1,0 +1,13 @@
+/bin/
+/dist/
+.env
+*.exe
+*.test
+coverage.out
+vendor/
+
+# Pulumi state lokal (jangan commit state sensitif)
+.pulumi/
+
+# Secret Kubernetes lokal (jangan commit)
+k8s/secret.yaml

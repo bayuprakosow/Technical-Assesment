@@ -1,0 +1,28 @@
+# HPA untuk skenario traffic tinggi (sesuai PROJECT_PLAN). Butuh metrics-server di cluster.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: findings-api
+  namespace: findings
+  labels:
+    app.kubernetes.io/name: findings-api
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: findings-api
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

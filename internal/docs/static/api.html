@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Referensi API — Findings API</title>
+  <link rel="stylesheet" href="/docs/_/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Referensi API</h1>
+    <p>Endpoint REST, skema autentikasi, dan contoh <code>curl</code>.</p>
+    <nav>
+      <a href="/docs">Beranda</a>
+      <span class="sep">|</span>
+      <a href="/docs/guide">Panduan setup</a>
+      <span class="sep">|</span>
+      <a href="/docs/api">Referensi API</a>
+      <span class="sep">|</span>
+      <a href="/docs/api-overview.xml">Ringkasan XML</a>
+      <span class="sep">|</span>
+      <a href="/docs/postman-collection.json">Postman</a>
+    </nav>
+  </header>
+  <main>
+    <section id="umum">
+      <h2>Konvensi</h2>
+      <p>Base URL contoh: <code>http://localhost:8080</code>. Body permintaan JSON memakai header <code>Content-Type: application/json</code>.</p>
+    </section>
+
+    <section id="postman">
+      <h2>Koleksi Postman (import &amp; uji)</h2>
+      <p>Endpoint JSON mengikuti skema koleksi Postman <strong>v2.1</strong>. Isi sudah mencakup variabel <code>baseUrl</code>, <code>jwtToken</code> (diisi otomatis setelah <strong>Auth → Login</strong> sukses), dan Basic Auth untuk rute internal.</p>
+      <p>
+        <a class="dl" href="/docs/postman-collection.json">Unduh findings-api.postman_collection.json</a>
+      </p>
+      <h3>Langkah di Postman</h3>
+      <ol>
+        <li><strong>Import</strong> → <strong>Upload Files</strong> atau <strong>Link</strong> → masukkan URL: <code>http://localhost:8080/docs/postman-collection.json</code> (sesuaikan host/port).</li>
+        <li>Bila perlu, ubah variabel koleksi <code>baseUrl</code>, <code>basicUser</code>, <code>basicPassword</code>, <code>demoEmail</code> / <code>demoPassword</code>.</li>
+        <li>Jalankan <strong>Auth → Register</strong> (sekali), lalu <strong>Auth → Login</strong> — token tersimpan ke <code>jwtToken</code>.</li>
+        <li>Jalankan request di folder <strong>JWT</strong> dan <strong>Internal</strong>.</li>
+      </ol>
+    </section>
+
+    <section id="publik">
+      <h2>Publik</h2>
+      <table>
+        <thead>
+          <tr><th>Metode</th><th>Path</th><th>Auth</th><th>Keterangan</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/health</code></td>
+            <td>—</td>
+            <td>Liveness. Respons: <code>{"status":"ok"}</code></td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/ready</code></td>
+            <td>—</td>
+            <td>Readiness (cek DB). <code>200</code> jika DB OK, <code>503</code> jika tidak.</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/api/v1/public/info</code></td>
+            <td>—</td>
+            <td>Info service: nama &amp; versi dari env.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="jwt">
+      <h2>Autentikasi pengguna (JWT)</h2>
+      <table>
+        <thead>
+          <tr><th>Metode</th><th>Path</th><th>Auth</th><th>Body / catatan</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/v1/auth/register</code></td>
+            <td>—</td>
+            <td><code>{"email":"string","password":"string"}</code> — password minimal 8 karakter.</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/v1/auth/login</code></td>
+            <td>—</td>
+            <td><code>{"email":"string","password":"string"}</code> — respons berisi <code>token</code> (Bearer).</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/api/v1/me</code></td>
+            <td><span class="pill">Bearer JWT</span></td>
+            <td>Header: <code>Authorization: Bearer &lt;token&gt;</code></td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/api/v1/findings</code></td>
+            <td><span class="pill">Bearer JWT</span></td>
+            <td>Daftar temuan milik user yang login.</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/v1/findings</code></td>
+            <td><span class="pill">Bearer JWT</span></td>
+            <td><code>{"title":"string","severity":"string","status":"string"}</code> — <code>status</code> opsional (default <code>open</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="internal">
+      <h2>Internal (HTTP Basic Auth)</h2>
+      <p>Kredensial dari <code>BASIC_AUTH_USER</code> dan <code>BASIC_AUTH_PASSWORD</code>. Jika salah satu kosong, rute internal mengembalikan <code>503</code>.</p>
+      <table>
+        <thead>
+          <tr><th>Metode</th><th>Path</th><th>Auth</th><th>Keterangan</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/internal/metrics</code></td>
+            <td><span class="pill">Basic</span></td>
+            <td>Contoh metrik placeholder.</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/internal/cache/purge</code></td>
+            <td><span class="pill">Basic</span></td>
+            <td>Simulasi purge cache.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="curl">
+      <h2>Contoh curl</h2>
+      <pre><code>curl -s http://localhost:8080/health
+curl -s -X POST http://localhost:8080/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"demo@example.com","password":"password123"}'
+TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"demo@example.com","password":"password123"}' | jq -r .token)
+curl -s http://localhost:8080/api/v1/me -H "Authorization: Bearer $TOKEN"
+curl -s -u "admin:admin" http://localhost:8080/internal/metrics</code></pre>
+    </section>
+
+    <section id="docs-routes">
+      <h2>Rute dokumentasi web</h2>
+      <table>
+        <thead>
+          <tr><th>Metode</th><th>Path</th><th>Isi</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/</code></td><td>Redirect ke <code>/docs</code></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/docs</code></td><td>Beranda dokumentasi</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/docs/guide</code></td><td>Panduan setup proyek</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/docs/api</code></td><td>Referensi API</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/docs/api-overview.xml</code></td><td>Ringkasan endpoint (XML)</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/docs/postman-collection.json</code></td><td>Koleksi Postman v2.1 (<code>Content-Disposition: attachment</code>)</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <footer><a href="/docs/guide">← Panduan setup</a> · Technical Assessment Findings API</footer>
+</body>
+</html>

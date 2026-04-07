@@ -1,0 +1,197 @@
+{
+  "info": {
+    "_postman_id": "f1nd1ng5-api-7a3c-0001-collect",
+    "name": "Findings API",
+    "description": "Koleksi untuk Findings API (Gin + PostgreSQL). Set variabel koleksi `baseUrl` jika server tidak di localhost:8080. Jalankan **Auth > Login** agar `jwtToken` terisi otomatis, lalu request di folder **JWT**.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "jwtToken", "value": "" },
+    { "key": "basicUser", "value": "admin" },
+    { "key": "basicPassword", "value": "admin" },
+    { "key": "demoEmail", "value": "demo@example.com" },
+    { "key": "demoPassword", "value": "password123" }
+  ],
+  "item": [
+    {
+      "name": "Publik",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health",
+            "description": "Liveness probe."
+          }
+        },
+        {
+          "name": "Ready",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/ready",
+            "description": "Readiness (cek koneksi database)."
+          }
+        },
+        {
+          "name": "Public info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/public/info",
+            "description": "Nama service & versi dari environment."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{demoEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/register",
+            "description": "Password minimal 8 karakter. Ubah demoEmail jika email sudah terdaftar."
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var j = pm.response.json();",
+                  "  if (j.token) { pm.collectionVariables.set('jwtToken', j.token); }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{demoEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/login",
+            "description": "Menyimpan token ke variabel koleksi `jwtToken` untuk folder JWT."
+          }
+        }
+      ]
+    },
+    {
+      "name": "JWT",
+      "auth": {
+        "type": "bearer",
+        "bearer": [{ "key": "token", "value": "{{jwtToken}}", "type": "string" }]
+      },
+      "item": [
+        {
+          "name": "Me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{jwtToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/me",
+            "description": "Profil user dari token. Jalankan Login dulu."
+          }
+        },
+        {
+          "name": "List findings",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{jwtToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/findings",
+            "description": "Daftar findings milik user login."
+          }
+        },
+        {
+          "name": "Create finding",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{jwtToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Temuan contoh dari Postman\",\n  \"severity\": \"medium\",\n  \"status\": \"open\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/findings",
+            "description": "Field status opsional (default open)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Internal (Basic Auth)",
+      "auth": {
+        "type": "basic",
+        "basic": [
+          { "key": "username", "value": "{{basicUser}}", "type": "string" },
+          { "key": "password", "value": "{{basicPassword}}", "type": "string" }
+        ]
+      },
+      "item": [
+        {
+          "name": "Metrics",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                { "key": "username", "value": "{{basicUser}}", "type": "string" },
+                { "key": "password", "value": "{{basicPassword}}", "type": "string" }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/internal/metrics",
+            "description": "Sesuaikan basicUser/basicPassword dengan env server."
+          }
+        },
+        {
+          "name": "Cache purge",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                { "key": "username", "value": "{{basicUser}}", "type": "string" },
+                { "key": "password", "value": "{{basicPassword}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/internal/cache/purge",
+            "description": "Simulasi purge cache."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<apiDocumentation xmlns="https://zentara.local/ns/api-docs" version="1.0" lang="id">
+  <title>Findings API — Ringkasan endpoint</title>
+  <basePath relative="true">/</basePath>
+
+  <section name="publik">
+    <endpoint method="GET" path="/health" auth="none" />
+    <endpoint method="GET" path="/ready" auth="none" />
+    <endpoint method="GET" path="/api/v1/public/info" auth="none" />
+  </section>
+
+  <section name="jwt">
+    <endpoint method="POST" path="/api/v1/auth/register" auth="none" />
+    <endpoint method="POST" path="/api/v1/auth/login" auth="none" />
+    <endpoint method="GET" path="/api/v1/me" auth="bearer-jwt" />
+    <endpoint method="GET" path="/api/v1/findings" auth="bearer-jwt" />
+    <endpoint method="POST" path="/api/v1/findings" auth="bearer-jwt" />
+  </section>
+
+  <section name="internal">
+    <endpoint method="GET" path="/internal/metrics" auth="http-basic" />
+    <endpoint method="POST" path="/internal/cache/purge" auth="http-basic" />
+  </section>
+
+  <section name="dokumentasi-web">
+    <endpoint method="GET" path="/" description="redirect ke /docs" />
+    <endpoint method="GET" path="/docs" description="beranda dokumentasi HTML" />
+    <endpoint method="GET" path="/docs/guide" description="panduan setup (user guide)" />
+    <endpoint method="GET" path="/docs/api" description="referensi API" />
+    <endpoint method="GET" path="/docs/_/style.css" description="stylesheet dokumentasi" />
+    <endpoint method="GET" path="/docs/api-overview.xml" description="ringkasan endpoint XML" />
+    <endpoint method="GET" path="/docs/postman-collection.json" description="koleksi Postman v2.1 (JSON, unduh/import)" />
+  </section>
+</apiDocumentation>

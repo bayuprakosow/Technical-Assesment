@@ -1,0 +1,3 @@
+# Stack pengembangan / sandbox — tidak sama dengan staging atau production.
+config:
+  aws:region: ap-southeast-1

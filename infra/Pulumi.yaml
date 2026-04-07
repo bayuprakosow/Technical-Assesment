@@ -1,0 +1,5 @@
+name: findings-api-infra
+runtime: go
+description: |
+  IaC Pulumi (stack dev) — contoh resource AWS untuk assessment.
+  Staging/production belum wajib; tambah stack baru (pulumi stack init staging) bila nanti ada environment.

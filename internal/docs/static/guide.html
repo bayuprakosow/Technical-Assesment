@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panduan setup — Findings API</title>
+  <link rel="stylesheet" href="/docs/_/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Panduan pengguna &amp; setup</h1>
+    <p>Menjalankan proyek secara manual di mesin lokal atau dengan Docker.</p>
+    <nav>
+      <a href="/docs">Beranda</a>
+      <span class="sep">|</span>
+      <a href="/docs/guide">Panduan setup</a>
+      <span class="sep">|</span>
+      <a href="/docs/api">Referensi API</a>
+      <span class="sep">|</span>
+      <a href="/docs/api-overview.xml">Ringkasan XML</a>
+      <span class="sep">|</span>
+      <a href="/docs/postman-collection.json">Postman</a>
+    </nav>
+  </header>
+  <main>
+    <section id="prasyarat">
+      <h2>Prasyarat</h2>
+      <ul>
+        <li>Go 1.22 atau lebih baru</li>
+        <li>PostgreSQL yang dapat diakses dari mesin kamu</li>
+        <li>Opsional: Docker dan Docker Compose (plugin <code>docker compose</code> atau binary <code>docker-compose</code>)</li>
+      </ul>
+    </section>
+
+    <section id="manual">
+      <h2>Jalankan manual (lokal)</h2>
+      <ol>
+        <li>Salin file environment: <code>cp .env.example .env</code></li>
+        <li>Isi <code>DATABASE_URL</code> dan <code>JWT_SECRET</code> (minimal 32 karakter). Samakan user Postgres dengan instalasi kamu (lihat Troubleshooting).</li>
+        <li>Pastikan database (mis. <code>findings</code>) sudah dibuat: <code>createdb findings</code></li>
+        <li>Jalankan server dari root repo:
+          <pre><code>go run ./cmd/server</code></pre>
+        </li>
+        <li>Buka dokumentasi di browser: <a href="/docs">/docs</a> (atau <code>/</code> yang redirect). API mendengarkan <code>HTTP_ADDR</code> (default <code>:8080</code>).</li>
+        <li>Untuk pengujian di Postman: unduh <a href="/docs/postman-collection.json">koleksi JSON</a>, lalu Postman → <strong>Import</strong> → file, atau <strong>Import</strong> → tautan (paste URL lengkap ke endpoint JSON tersebut).</li>
+      </ol>
+    </section>
+
+    <section id="docker">
+      <h2>Jalankan dengan Docker</h2>
+      <h3>Hanya PostgreSQL</h3>
+      <p>API tetap dijalankan dengan <code>go run ./cmd/server</code> di host.</p>
+      <pre><code>docker compose up -d postgres
+# atau: docker-compose up -d postgres</code></pre>
+      <p>Pastikan <code>DATABASE_URL</code> di <code>.env</code> mengarah ke <code>localhost:5432</code> dengan user <code>postgres</code> dan password sesuai <code>docker-compose.yml</code>.</p>
+
+      <h3>API + Postgres sekaligus</h3>
+      <pre><code>docker compose up --build
+# atau: docker-compose up --build</code></pre>
+      <p>Layanan <code>api</code> memakai environment yang didefinisikan di Compose; ganti secret untuk lingkungan non-demo.</p>
+    </section>
+
+    <section id="env">
+      <h2>Variabel environment</h2>
+      <table>
+        <thead>
+          <tr><th>Variabel</th><th>Wajib</th><th>Keterangan</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>DATABASE_URL</code></td><td>ya</td><td>DSN PostgreSQL.</td></tr>
+          <tr><td><code>JWT_SECRET</code></td><td>ya</td><td>Minimal 32 karakter.</td></tr>
+          <tr><td><code>HTTP_ADDR</code></td><td>tidak</td><td>Default <code>:8080</code>.</td></tr>
+          <tr><td><code>BASIC_AUTH_USER</code></td><td>untuk internal</td><td>Bersama password; jika kosong → 503 di <code>/internal/*</code>.</td></tr>
+          <tr><td><code>BASIC_AUTH_PASSWORD</code></td><td>untuk internal</td><td>Sama seperti di atas.</td></tr>
+          <tr><td><code>SERVICE_NAME</code></td><td>tidak</td><td>Default <code>findings-api</code>.</td></tr>
+          <tr><td><code>SERVICE_VERSION</code></td><td>tidak</td><td>Default <code>0.1.0</code>.</td></tr>
+        </tbody>
+      </table>
+      <p>File <code>.env</code> di root repo dimuat otomatis saat startup (jika ada).</p>
+    </section>
+
+    <section id="troubleshoot">
+      <h2>Troubleshooting</h2>
+      <h3><code>role "postgres" does not exist</code></h3>
+      <p>User di <code>DATABASE_URL</code> tidak ada di server Postgres. Homebrew di macOS sering memakai <strong>nama user macOS</strong> sebagai superuser, bukan <code>postgres</code>. Sesuaikan DSN atau buat role <code>postgres</code> / jalankan Postgres dari Docker Compose proyek ini.</p>
+      <h3>Docker Compose tidak dikenali</h3>
+      <p>Pasang Docker Desktop (plugin Compose) atau gunakan perintah <code>docker-compose</code> dengan tanda hubung.</p>
+    </section>
+  </main>
+  <footer><a href="/docs/api">Lanjut ke referensi API →</a></footer>
+</body>
+</html>

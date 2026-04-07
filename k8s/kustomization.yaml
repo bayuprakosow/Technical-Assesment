@@ -1,0 +1,14 @@
+# kubectl apply -k k8s/
+# Terapkan secret dulu: kubectl apply -f k8s/secret.example.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: findings
+
+resources:
+  - namespace.yaml
+  - postgres.yaml
+  - configmap.yaml
+  - deployment-api.yaml
+  - service-api.yaml
+  - hpa-api.yaml
