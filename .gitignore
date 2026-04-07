@@ -5,6 +5,7 @@
 *.test
 coverage.out
 vendor/
+PRESENTASI.md
 
 # Pulumi state lokal (jangan commit state sensitif)
 .pulumi/
