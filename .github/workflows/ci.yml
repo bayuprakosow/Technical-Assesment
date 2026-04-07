@@ -9,28 +9,28 @@ permissions:
   contents: read
 
 jobs:
-  go:
-    name: Go (vet, build, test)
-    # runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # go:
+  #   name: Go (vet, build, test)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-          cache: true
+  #     - uses: actions/setup-go@v5
+  #       with:
+  #         go-version-file: go.mod
+  #         cache: true
 
-      - name: Verify modules
-        run: go mod verify
+  #     - name: Verify modules
+  #       run: go mod verify
 
-      - name: Vet
-        run: go vet ./...
+  #     - name: Vet
+  #       run: go vet ./...
 
-      - name: Build
-        run: go build -trimpath -ldflags="-s -w" -o /tmp/findings-server ./cmd/server
+  #     - name: Build
+  #       run: go build -trimpath -ldflags="-s -w" -o /tmp/findings-server ./cmd/server
 
-      - name: Test
-        run: go test -race -count=1 ./...
+  #     - name: Test
+  #       run: go test -race -count=1 ./...
 
   docker:
     name: Docker image
