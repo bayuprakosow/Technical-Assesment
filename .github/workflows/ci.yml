@@ -11,7 +11,7 @@ permissions:
 jobs:
   go:
     name: Go (vet, build, test)
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
