@@ -8,7 +8,7 @@ Dokumen ini membantu kamu **memaparkan proyek secara jujur** (keterbatasan lokal
 
 - Saya membangun **Findings API**: REST API dengan **Go + Gin + PostgreSQL**, fokus pola yang dipakai di lingkungan produksi (auth, container, orkestrasi, otomasi, IaC).
 - Scope mengikuti brief assessment: **REST + auth**, **Docker**, **Kubernetes**, **CI/CD**, **IaC**; **LLM** sengaja tidak dimasukkan sesuai rencana.
-- Saya akan jelaskan **apa yang sudah jalan di mesin lokal / CI**, **apa yang direpresentasikan sebagai artefak** (manifest, Pulumi), dan **rencana penguatan** bila ada akses cloud/cluster sungguhan.
+- Saya akan jelaskan **apa yang sudah jalan di mesin lokal / CI**, **apa yang direpresentasikan sebagai artefak** (manifest, Pulumi), dan **rsencana penguatan** bila ada akses cloud/cluster sungguhan.
 
 ---
 
@@ -16,12 +16,14 @@ Dokumen ini membantu kamu **memaparkan proyek secara jujur** (keterbatasan lokal
 
 Ucapkan dengan tenang; asesor biasanya menghargai kejujuran.
 
-| Keterbatasan | Dampak | Yang saya lakukan sebagai gantinya |
-|--------------|--------|-------------------------------------|
-| Tidak ada **staging/production** tetap | Tidak ada deploy berkelanjutan ke cloud | Pipeline CI memverifikasi **build, test, image**; manifest & IaC siap untuk environment nyata |
-| Cluster K8s mungkin **tidak selalu jalan** di laptop | `kubectl apply` / HPA tidak selalu didemokan live | Menyediakan manifest **lengkap + README**; menjelaskan alur apply dan kebutuhan **metrics-server** untuk HPA |
-| **Registry & deploy otomatis** belum di-wire | CD “push + deploy” belum di GitHub Actions | **Pulumi** mendefinisikan **ECR**; workflow bisa ditambah job push/deploy bila ada **secrets** registry & kubeconfig |
-| Secret **demo** di compose / `secret.example` | Bukan pola production | Dokumentasi: ganti via **Secret K8s** / **GitHub Secrets**; file sensitif di-`.gitignore` |
+
+| Keterbatasan                                         | Dampak                                            | Yang saya lakukan sebagai gantinya                                                                                   |
+| ---------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Tidak ada **staging/production** tetap               | Tidak ada deploy berkelanjutan ke cloud           | Pipeline CI memverifikasi **build, test, image**; manifest & IaC siap untuk environment nyata                        |
+| Cluster K8s mungkin **tidak selalu jalan** di laptop | `kubectl apply` / HPA tidak selalu didemokan live | Menyediakan manifest **lengkap + README**; menjelaskan alur apply dan kebutuhan **metrics-server** untuk HPA         |
+| **Registry & deploy otomatis** belum di-wire         | CD “push + deploy” belum di GitHub Actions        | **Pulumi** mendefinisikan **ECR**; workflow bisa ditambah job push/deploy bila ada **secrets** registry & kubeconfig |
+| Secret **demo** di compose / `secret.example`        | Bukan pola production                             | Dokumentasi: ganti via **Secret K8s** / **GitHub Secrets**; file sensitif di-`.gitignore`                            |
+
 
 **Kalimat siap pakai:**  
 *“Secara lokal saya prioritaskan **repeatability** dan **artefak yang bisa direview**: kode, tes, Docker, manifest Kubernetes, dan Pulumi. Integrasi penuh ke cloud saya arahkan sebagai langkah berikutnya begitu ada environment dan kredensial resmi.”*
@@ -60,7 +62,7 @@ Ucapkan dengan tenang; asesor biasanya menghargai kejujuran.
 
 ### Dokumentasi & uji manual
 
-- **Sudah:** Halaman **`/docs`** (panduan setup + referensi API), **Postman collection** JSON untuk import, **README** + **`k8s/README.md`** + **`infra/README.md`**.
+- **Sudah:** Halaman `**/docs`** (panduan setup + referensi API), **Postman collection** JSON untuk import, **README** + `**k8s/README.md`** + `**infra/README.md**`.
 
 ---
 
@@ -81,9 +83,9 @@ Pilih yang paling stabil di laptop kamu:
 1. `docker compose up` **atau** `go run` + Postgres.
 2. Browser: `http://localhost:8080/docs` — tunjuk pemisahan **panduan** vs **API**.
 3. Postman / curl: **register → login → findings**; lalu **internal** dengan Basic Auth.
-4. Tunjukkan di IDE: folder **`k8s/`** (Deployment, HPA), **`.github/workflows`**, **`infra/`** (Pulumi).
+4. Tunjukkan di IDE: folder `**k8s/`** (Deployment, HPA), `**.github/workflows**`, `**infra/**` (Pulumi).
 
-Jika cluster tidak jalan: buka file **`k8s/hpa-api.yaml`** dan **`deployment-api`** — jelaskan **probes** dan **mengapa** ada **requests** CPU/memory untuk HPA.
+Jika cluster tidak jalan: buka file `**k8s/hpa-api.yaml**` dan `**deployment-api**` — jelaskan **probes** dan **mengapa** ada **requests** CPU/memory untuk HPA.
 
 ---
 
