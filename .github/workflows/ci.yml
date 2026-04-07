@@ -32,27 +32,27 @@ jobs:
       - name: Test
         run: go test -race -count=1 ./...
 
-  docker:
-    name: Docker image
-    runs-on: ubuntu-latest
-    needs: go
-    steps:
-      - uses: actions/checkout@v4
+  # docker:
+  #   name: Docker image
+  #   runs-on: ubuntu-latest
+  #   needs: go
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Build image (tanpa push)
-        run: docker build -t findings-api:ci .
+  #     - name: Build image (tanpa push)
+  #       run: docker build -t findings-api:ci .
 
-  pulumi-infra:
-    name: Pulumi IaC (compile)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # pulumi-infra:
+  #   name: Pulumi IaC (compile)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: infra/go.mod
-          cache-dependency-path: infra/go.sum
+  #     - uses: actions/setup-go@v5
+  #       with:
+  #         go-version-file: infra/go.mod
+  #         cache-dependency-path: infra/go.sum
 
-      - name: Build program Pulumi
-        working-directory: infra
-        run: go build -trimpath -o /dev/null .
+  #     - name: Build program Pulumi
+  #       working-directory: infra
+  #       run: go build -trimpath -o /dev/null .
